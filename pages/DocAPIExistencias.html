@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Documentación API de existencias para Aspel SAE.">
+  <title>WIS API Documentation | API Existencias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+
+  <header class="site-header" role="banner">
+    <div class="container">
+      <div class="brand-row">
+        <img class="brand-logo" src="../Assets/WIS LOGO_gmail_2.png" alt="WIS logo" width="180" height="60">
+      </div>
+      <p class="eyebrow">WIS API Documentation</p>
+      <h1>Documentación API - Aspel SAE Existencias</h1>
+      <p class="lead">Referencia técnica para autenticación, endpoints, parámetros y ejemplos de respuesta.</p>
+    </div>
+  </header>
+
+  <main id="contenido" class="site-main" role="main">
+    <section class="container panel doc-content" aria-labelledby="info-general-titulo">
+      <h2 id="info-general-titulo">Información general</h2>
+      <ul>
+        <li>Base URL: <a href="http://192.168.0.105:5001">http://192.168.0.105:5001</a></li>
+        <li>Versión: 1.0.0</li>
+        <li>Tipo de autenticación: JWT (JSON Web Token)</li>
+      </ul>
+
+      <h2>Autenticación</h2>
+      <p>La API utiliza JWT para autenticación; primero se debe obtener el token y luego incluirlo en los headers de las peticiones.</p>
+
+      <h2>Endpoints</h2>
+      <h3>1. Generar token de autenticación</h3>
+      <p>Obtiene un token JWT válido para acceder a los endpoints protegidos.</p>
+      <ul>
+        <li>Endpoint: POST /api/v1/Token</li>
+        <li>Autenticación: No requiere</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+
+      <h4>Request Body</h4>
+      <pre><code class="language-json">{
+  "nombre": "client_name",
+  "contraseña": "j3h4kjh3jkh2"
+}</code></pre>
+
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Campo</th>
+            <th scope="col" style="text-align: center;">Tipo</th>
+            <th scope="col" style="text-align: center;">Requerido</th>
+            <th scope="col">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>nombre</td>
+            <td style="text-align: center;">string</td>
+            <td style="text-align: center;">Si</td>
+            <td>Nombre del client app</td>
+          </tr>
+          <tr>
+            <td>contraseña</td>
+            <td style="text-align: center;">string</td>
+            <td style="text-align: center;">Si</td>
+            <td>Contraseña proporcionada</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Respuestas</h4>
+      <h5>HttpStatusCode 200 - Ok</h5>
+      <pre><code class="language-json">{
+  "token": "sdkfmlasdkfasdlfjsdalfkjasdlfksdjalfkj"
+}</code></pre>
+
+      <h5>HttpStatusCode 400 - Bad Request</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>HttpStatusCode 401 - Unauthorized</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>HttpStatusCode 500 - Internal Server Error</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>Ejemplo con cURL</h5>
+      <pre><code class="language-http">curl -X POST "{base_url}/api/v1/Token" \
+  -H "Content-Type: application-json" \
+  -d "{ \"nombre\": \"client_name\", \"contraseña\": \"sdkfnlasdkfmasdlfkjasdlfkjasdl\" }"</code></pre>
+
+      <h3>2. Obtener existencias</h3>
+      <p>Obtiene las existencias del almacén número 1 con su precio público.</p>
+      <ul>
+        <li>Endpoint: GET /api/v1/Existencias</li>
+        <li>Autenticación: Bearer {token_jwt}</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+
+      <h4>Query Parameters</h4>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Campo</th>
+            <th scope="col" style="text-align: center;">Tipo</th>
+            <th scope="col" style="text-align: center;">Requerido</th>
+            <th scope="col">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>numeroPagina</td>
+            <td style="text-align: center;">int</td>
+            <td style="text-align: center;">No</td>
+            <td>Número de página (Default 1)</td>
+          </tr>
+          <tr>
+            <td>salto</td>
+            <td style="text-align: center;">int</td>
+            <td style="text-align: center;">No</td>
+            <td>Tamaño de cada salto (Default 20)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Respuestas</h4>
+      <h5>HttpStatusCode 200 - Ok</h5>
+      <pre><code class="language-json">{
+  "items": [
+    {
+      "codigo": "PROD01",
+      "nombre": "Producto 1",
+      "existencia": 1.5,
+      "precioPublico": 1.25,
+      "idAlmacen": 1,
+      "nombreAlmacen": "Almacen 1"
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 20,
+  "totalItems": 1500,
+  "totalPages": 75
+}</code></pre>
+
+      <h5>HttpStatusCode 400 - Bad Request</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>HttpStatusCode 401 - Unauthorized</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>HttpStatusCode 500 - Internal Server Error</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>Ejemplo con cURL</h5>
+      <pre><code class="language-http">curl -X GET "{base_url}/api/v1/Existencias?numeroPagina=1&amp;salto=20" \
+  -H "Content-Type: application-json" \
+  -H "Authentication: Bearer &lt;token&gt;"</code></pre>
+
+      <section class="return-section" aria-label="Regresar al índice">
+        <h2>Regresar al índice</h2>
+        <p class="section-note">Usa este acceso para volver a la landing principal de documentación.</p>
+        <p><a class="tag" href="../index.html">Volver a index.html</a></p>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <small>WIS API Documentation</small>
+    </div>
+  </footer>
+</body>
+</html>
