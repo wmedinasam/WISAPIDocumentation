@@ -131,13 +131,19 @@
             <td>numeroPagina</td>
             <td style="text-align: center;">int</td>
             <td style="text-align: center;">No</td>
-            <td>Número de página (Default 1)</td>
+            <td>Número de página (Default 1) solo se envía cuando se busca por un único código</td>
           </tr>
           <tr>
             <td>salto</td>
             <td style="text-align: center;">int</td>
             <td style="text-align: center;">No</td>
-            <td>Tamaño de cada salto (Default 20)</td>
+            <td>Tamaño de cada salto (Default 20) solo se envía cuando se busca por un único código</td>
+          </tr>
+          <tr>
+            <td>codigos</td>
+            <td style="text-align: center;">int</td>
+            <td style="text-align: center;">No</td>
+            <td>listado de códigos separado por comas (max 15) si se envían más de 15 códigos solo toma en cuenta los primeros 15</td>
           </tr>
         </tbody>
       </table>
@@ -176,8 +182,92 @@
   "message": "mensaje de error"
 }</code></pre>
 
+      <h5>Ejemplo con cURL busqueda por un unico código</h5>
+      <pre><code class="language-http">curl -X GET "{base_url}/api/v1/Existencias?numeroPagina=1&amp;salto=20&amp;idProducto=PROD01" \
+  -H "Content-Type: application-json" \
+  -H "Authentication: Bearer &lt;token&gt;"</code></pre>
+
+    <h5>Ejemplo con cURL busqueda por multiples códigos</h5>
+      <pre><code class="language-http">curl -X GET "{base_url}/api/v1/Existencias?codigos=PROD01,PROD02" \
+  -H "Content-Type: application-json" \
+  -H "Authentication: Bearer &lt;token&gt;"</code></pre>
+
+<h3>3. Buscar existencias por código o nombre</h3>
+      <p>Obtiene las existencias del almacén número 1 con su precio público basado en el código o nombre del producto.</p>
+      <ul>
+        <li>Endpoint: GET /api/v1/Existencias/buscar</li>
+        <li>Autenticación: Bearer {token_jwt}</li>
+        <li>Content-Type: application/json</li>
+      </ul>
+
+<h4>Query Parameters</h4>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Campo</th>
+            <th scope="col" style="text-align: center;">Tipo</th>
+            <th scope="col" style="text-align: center;">Requerido</th>
+            <th scope="col">Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>termino</td>
+            <td style="text-align: center;">string</td>
+            <td style="text-align: center;">No</td>
+            <td>se puede colocar el código o nombre del producto</td>
+          </tr>
+          <tr>
+            <td>numeroPagina</td>
+            <td style="text-align: center;">int</td>
+            <td style="text-align: center;">No</td>
+            <td>Número de página (Default 1)</td>
+          </tr>
+          <tr>
+            <td>salto</td>
+            <td style="text-align: center;">int</td>
+            <td style="text-align: center;">No</td>
+            <td>Tamaño de cada salto (Default 20)</td>
+          </tr>          
+        </tbody>
+      </table>
+
+      <h4>Respuestas</h4>
+      <h5>HttpStatusCode 200 - Ok</h5>
+      <pre><code class="language-json">{
+  "items": [
+    {
+      "codigo": "PROD01",
+      "nombre": "Producto 1",
+      "existencia": 1.5,
+      "precioPublico": 1.25,
+      "idAlmacen": 1,
+      "nombreAlmacen": "Almacen 1"
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 20,
+  "totalItems": 1500,
+  "totalPages": 75
+}</code></pre>
+
+      <h5>HttpStatusCode 400 - Bad Request</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>HttpStatusCode 401 - Unauthorized</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
+      <h5>HttpStatusCode 500 - Internal Server Error</h5>
+      <pre><code class="language-json">{
+  "message": "mensaje de error"
+}</code></pre>
+
       <h5>Ejemplo con cURL</h5>
-      <pre><code class="language-http">curl -X GET "{base_url}/api/v1/Existencias?numeroPagina=1&amp;salto=20" \
+      <pre><code class="language-http">curl -X GET "{base_url}/api/v1/Existencias/buscar?termino=PROD01&numeroPagina=1&salto=20" \
   -H "Content-Type: application-json" \
   -H "Authentication: Bearer &lt;token&gt;"</code></pre>
 
